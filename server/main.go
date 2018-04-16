@@ -2,7 +2,7 @@ package main
 
 import "golang.org/x/net/context"
 import (
-	pb "study_grpc/helloworld"
+	pb "go-service/helloworld"
 	"net"
 	"log"
 	"google.golang.org/grpc"
