@@ -25,7 +25,7 @@ func main() {
 		fmt.Println("请填写有效数字")
 		os.Exit(0)
 	}
-	f, err := os.OpenFile(*fileName, os.O_APPEND, 0666)
+	f, err := os.Open(*fileName)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(0)
