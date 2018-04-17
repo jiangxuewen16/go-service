@@ -6,6 +6,8 @@ import (
 	//"golang.org/x/text/encoding/simplifiedchinese"
 	"strings"
 	"golang.org/x/text/encoding/simplifiedchinese"
+	"flag"
+	"os"
 )
 
 type Charset string
@@ -15,11 +17,18 @@ const (
 	GB18030 = Charset("GB18030")
 )
 
+var fileName1 = flag.String("f", "/home/logs/golang/test.log", "文件路径+文件名称")
 
 var ExceptionSlice = [...]string{"com.carhouse.common.exception.ServiceRuntimeException", "java.lang.NullPointerException"}
 
 func main() {
-	t, err := tail.TailFile("D:/logs/log.log", tail.Config{Follow: true})
+	flag.Parse()
+	if len(*fileName1) == 0 {
+		fmt.Println("文件名称不能为空")
+		os.Exit(0)
+	}
+
+	t, err := tail.TailFile(*fileName1, tail.Config{Follow: true})
 	if err != nil {
 		fmt.Println(err)
 	}
