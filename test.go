@@ -1,61 +1,26 @@
 package main
 
 import (
-	"github.com/hpcloud/tail"
 	"fmt"
-	//"golang.org/x/text/encoding/simplifiedchinese"
-	"strings"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"flag"
-	"os"
+	"net"
+	"encoding/json"
 )
 
-type Charset string
+type FileClientTransfer struct {
+	Conn *net.Conn `json:"conn"` //socket连接
 
-const (
-	UTF8    = Charset("UTF-8")
-	GB18030 = Charset("GB18030")
-)
+	label string `json:"label"` //master-主服务端(中心服务器)  slave-从服务器
 
-var fileName1 = flag.String("f", "/home/logs/golang/test.log", "文件路径+文件名称")
-
-var ExceptionSlice = [...]string{"com.carhouse.common.exception.ServiceRuntimeException", "java.lang.NullPointerException"}
-
-func main() {
-	flag.Parse()
-	if len(*fileName1) == 0 {
-		fmt.Println("文件名称不能为空")
-		os.Exit(0)
-	}
-
-	t, err := tail.TailFile(*fileName1, tail.Config{Follow: true})
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	for line := range t.Lines {
-		//var str = ConvertByte2String([]byte(line.Text), GB18030)
-
-		for _, exception := range ExceptionSlice {
-			if strings.Contains(line.Text, exception) {
-				var str = fmt.Sprintf("%q:::::Line:%d:::::Time:%T", line.Text, 100, line.Time)
-				fmt.Println(str)
-			}
-		}
-	}
+	FileName      string `json:"file_name"`       //待发送文件名称
+	MergeFileName string `json:"merge_file_name"` //待合并文件名称
+	Coroutine     int    `json:"coroutine"`       //协程数量或拆分文件的数量
+	BufSize       int    `json:"buf_size"`        //单次发送数据的大小
 }
 
-func ConvertByte2String(byte []byte, charset Charset) string {
+func main() {
+	a := `{"conn":null,"file_name":"adada.jpg","merge_file_name":"","coroutine":0,"buf_size":0}`
+	f := &FileClientTransfer{}
+	json.Unmarshal([]byte(a), f)
 
-	var str string
-	switch charset {
-	case GB18030:
-		var decodeBytes, _ = simplifiedchinese.GB18030.NewDecoder().Bytes(byte)
-		str = string(decodeBytes)
-	case UTF8:
-		fallthrough
-	default:
-		str = string(byte)
-	}
-	return str
+	fmt.Println(f)
 }
